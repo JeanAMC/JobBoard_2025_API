@@ -25,7 +25,6 @@ class VacanteTrabajo extends Model
     ];
 
     protected $casts = [
-        'Habilidades' => 'array',
         'Fecha_Publicacion' => 'datetime',
         'Expiracion' => 'datetime',
     ];
