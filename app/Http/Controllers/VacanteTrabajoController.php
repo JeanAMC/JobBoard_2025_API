@@ -24,7 +24,7 @@ class VacanteTrabajoController extends Controller
         $validated = $request->validate([
             'Titulo' => 'required|string|max:255',
             'Descripcion' => 'required|string',
-            'Compañia' => 'required|string|max:255',
+            'Compania' => 'required|string|max:255',
             'Localizacion' => 'required|string|max:255',
             'Salario' => 'nullable|numeric|min:0',
             'Tipo_Contrato' => 'required|string|in:full_time,part_time,freelance',
@@ -60,13 +60,19 @@ class VacanteTrabajoController extends Controller
 
     public function buscarPorTitulo(Request $request)
 {
-    $request->validate([
-        'titulo' => 'required|string',
-    ]);
+    // Si no se proporciona 'titulo', devolver todas las vacantes
+    if (!$request->has('titulo') || trim($request->titulo) === '') {
+        $vacantes = VacanteTrabajo::orderBy('created_at', 'desc')->get();
+        return response()->json([
+            'vacantes' => $vacantes,
+        ]);
+    }
 
     $titulo = $request->titulo;
 
-    $vacantes = VacanteTrabajo::where('Titulo', 'LIKE', '%' . $titulo . '%')->get();
+    $vacantes = VacanteTrabajo::where('Titulo', 'LIKE', '%' . $titulo . '%')
+                              ->orderBy('created_at', 'desc')
+                              ->get();
 
     if ($vacantes->isEmpty()) {
         return response()->json(['message' => 'No se encontraron vacantes con ese título.'], 404);

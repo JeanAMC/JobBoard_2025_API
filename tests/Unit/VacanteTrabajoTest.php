@@ -13,7 +13,7 @@ class VacanteTrabajoTest extends TestCase
         $vacante = new VacanteTrabajo([
             'Titulo' => 'Backend Developer',
             'Descripcion' => 'Conocimiento en Laravel',
-            'Compañia' => 'Tech Corp',
+            'Compania' => 'Tech Corp',
             'Localizacion' => 'Remoto',
             'Salario' => 50000,
             'Tipo_Contrato' => 'full_time',

@@ -12,7 +12,7 @@ class VacanteTrabajo extends Model
     protected $fillable = [
         'Titulo',
         'Descripcion',
-        'Compañia',
+        'Compania',
         'Localizacion',
         'Salario',
         'Tipo_Contrato',

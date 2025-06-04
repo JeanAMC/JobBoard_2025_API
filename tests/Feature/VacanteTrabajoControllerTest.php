@@ -24,7 +24,7 @@ class VacanteTrabajoControllerTest extends TestCase
         $data = [
             'Titulo' => 'Desarrollador Backend',
             'Descripcion' => 'Se busca desarrollador con experiencia en Laravel',
-            'Compañia' => 'Tech Corp',
+            'Compania' => 'Tech Corp',
             'Localizacion' => 'Remoto',
             'Salario' => 25000,
             'Tipo_Contrato' => 'full_time',
@@ -46,7 +46,7 @@ class VacanteTrabajoControllerTest extends TestCase
                 'id',
                 'Titulo',
                 'Descripcion',
-                'Compañia',
+                'Compania',
                 'Localizacion',
                 'Salario',
                 'Tipo_Contrato',
@@ -64,7 +64,7 @@ class VacanteTrabajoControllerTest extends TestCase
         // Verificar que la vacante esté en la base de datos
         $this->assertDatabaseHas('vacantetrabajos', [
             'Titulo' => 'Desarrollador Backend',
-            'Compañia' => 'Tech Corp',
+            'Compania' => 'Tech Corp',
         ]);
     }
 }
