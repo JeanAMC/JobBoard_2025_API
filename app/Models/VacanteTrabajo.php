@@ -12,7 +12,7 @@ class VacanteTrabajo extends Model
     protected $fillable = [
         'Titulo',
         'Descripcion',
-        'Compañia',
+        'Compania',
         'Localizacion',
         'Salario',
         'Tipo_Contrato',
@@ -25,7 +25,6 @@ class VacanteTrabajo extends Model
     ];
 
     protected $casts = [
-        'Habilidades' => 'array',
         'Fecha_Publicacion' => 'datetime',
         'Expiracion' => 'datetime',
     ];

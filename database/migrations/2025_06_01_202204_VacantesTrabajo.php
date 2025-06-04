@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('Titulo');
             $table->text('Descripcion');
-            $table->string('Compañia');
+            $table->string('Compania');
             $table->string('Localizacion');
             $table->decimal('Salario')->nullable();
             $table->string('Tipo_Contrato')->default('full_time');
