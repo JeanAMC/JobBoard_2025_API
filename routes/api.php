@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\controllerEjemplo;
 use App\Http\Controllers\VacanteTrabajoController;
+use App\Http\Controllers\PostulacionController;
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
@@ -24,4 +25,8 @@ Route::middleware('auth:sanctum')->group(function () {
      Route::get('/Vacantes', [VacanteTrabajoController::class, 'show']);
      Route::get('/Vacantes/buscar', [VacanteTrabajoController::class, 'buscarPorTitulo']);
 
+});
+Route::middleware('auth:sanctum')->group(function () {
+    // ...otras rutas...
+    Route::post('/postulaciones/{id}/cambiar-estado', [PostulacionController::class, 'cambiarEstado']);
 });
