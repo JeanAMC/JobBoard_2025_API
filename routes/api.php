@@ -22,8 +22,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/Vacantes/buscar', [VacanteTrabajoController::class, 'buscarPorTitulo']);
 
     Route::post('/postulaciones/{id}/cambiar-estado', [PostulacionController::class, 'cambiarEstado']);
-    Route::get('/postulaciones', [PostulacionController::class, 'index']);
+    Route::get('/obtenerpostulaciones', [PostulacionController::class, 'index']);
     Route::post('/postulaciones', [PostulacionController::class, 'store']);
-    Route::put('/postulaciones/{id}/status', [PostulacionController::class, 'updateStatus']);
+    Route::post('/postulaciones/{id}/status', [PostulacionController::class, 'updateStatus']);
   
 });
+

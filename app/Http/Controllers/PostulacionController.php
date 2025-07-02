@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Postulacion;
-use App\Models\VacanteTrabajo;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use App\Notifications\EstadoPostulacionNotification;
 use App\Models\User;
@@ -37,33 +35,14 @@ class PostulacionController extends Controller
         ], 200);
     }
 
-      public function cambiarEstado(Request $request, $id)
-    {
-        $postulacion = Postulacion::findOrFail($id);
-        $nuevoEstado = $request->input('estado'); // 'aceptada' o 'rechazada'
-        $mensajePersonalizado = $request->input('mensaje');
-
-        $postulacion->estado = $nuevoEstado;
-        $postulacion->save();
-
-        // Busca el usuario relacionado a la postulación
-        $usuario = User::find($postulacion->user_id);
-
-        // Envía la notificación por correo
-        if ($usuario && $usuario->email) {
-            $usuario->notify(new EstadoPostulacionNotification($nuevoEstado, $mensajePersonalizado));
-        }
-
-        return response()->json(['message' => 'Estado actualizado y correo enviado']);
-    }
     public function store(Request $request)
     {
         $userId = $request->user()->id;
 
         $validated = $request->validate([
             'vacantetrabajo_id' => 'required|exists:vacantetrabajos,id',
-            'telefono' => 'required|string|max:20', // Aseguramos que el teléfono es requerido
-            'curriculum_vitae' => 'required|file|mimes:pdf,doc,docx|max:2048', // CV: requerido, tipo de archivo, tamaño máximo
+            'telefono' => 'required|string|max:20',
+            'curriculum_vitae' => 'required|file|mimes:pdf,doc,docx|max:2048', 
         ]);
 
         $rutaCv = null;
@@ -80,46 +59,59 @@ class PostulacionController extends Controller
             'ruta_cv' => $rutaCv,
             'estado' => 'pendiente',
         ]);
-
+       // $postulacion->user->notify(new EstadoPostulacionNotification($postulacion));
         return response()->json([
             'message' => 'Postulación creada exitosamente',
             'data' => $postulacion->load('vacante', 'postulante')
         ], 201);
     }
 
-    public function updateStatus(Request $request, string $id)
-    {
-        $user = Auth::user();
+        public function updateStatus(Request $request, string $id)
+        {
+            $user = Auth::user();
+            if (!$user) {
+                return response()->json(['message' => 'No autenticado.'], 401);
+            }
 
-        if (!$user) {
-            return response()->json(['message' => 'No autenticado.'], 401);
+            $request->validate([
+                'estado' => ['required', 'string', 'in:aceptada,rechazada'],
+                'mensaje' => ['nullable', 'string'],
+            ]);
+
+            $postulacion = Postulacion::with('vacante')->find($id);
+
+            if (!$postulacion) {
+                return response()->json(['message' => 'Postulación no encontrada.'], 404);
+            }
+
+            $isOwner = $postulacion->vacante && $postulacion->vacante->user_id === $user->id;
+            $isAdmin = ($user->rol === 'admin');
+
+            if (!$isOwner && !$isAdmin) {
+                return response()->json(['message' => 'No autorizado para actualizar esta postulación.'], 403);
+            }
+
+            $postulacion->estado = $request->estado;
+            $postulacion->save();
+
+
+            $usuario = User::find($postulacion->user_id);
+            if ($usuario && $usuario->email) {
+                $usuario->notify(new EstadoPostulacionNotification(
+                    $request->estado,
+                    $postulacion,
+                    $request->mensaje
+                ));
+            }
+
+            return response()->json([
+                'message' => 'Estado actualizado y notificación enviada.',
+                'data' => $postulacion->load('vacante', 'postulante'),
+            ]);
         }
 
-        $request->validate([
-            'estado' => ['required', 'string', 'in:aceptada,rechazada'],
-        ]);
 
-        $postulacion = Postulacion::with('vacante')->find($id);
 
-        if (!$postulacion) {
-            return response()->json(['message' => 'Postulación no encontrada.'], 404);
-        }
-
-        $isOwner = $postulacion->vacante && $postulacion->vacante->user_id === $user->id;
-        $isAdmin = ($user->rol === 'admin');
-
-        if (!$isOwner && !$isAdmin) {
-            return response()->json(['message' => 'No autorizado para actualizar esta postulación.'], 403);
-        }
-
-        $postulacion->estado = $request->estado;
-        $postulacion->save();
-
-        return response()->json([
-            'message' => 'Estado de la postulación actualizado correctamente.',
-            'data' => $postulacion->load('vacante', 'postulante')
-        ]);
-    }
 
 }
 
