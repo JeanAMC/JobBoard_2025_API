@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-            Schema::create('postulaciones', function (Blueprint $table) {
+        Schema::create('postulaciones', function (Blueprint $table) {
             $table->id();
             $table->foreignId('vacantetrabajo_id')->constrained('vacantetrabajos')->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->text('mensaje')->nullable();
+            $table->string('telefono')->nullable();
+            $table->string('ruta_cv')->nullable();
             $table->string('estado')->default('pendiente');
             $table->timestamp('fecha_postulacion')->useCurrent();
             $table->timestamps();
@@ -27,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('postulaciones');
     }
 };

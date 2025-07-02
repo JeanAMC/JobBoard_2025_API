@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\controllerEjemplo;
 use App\Http\Controllers\VacanteTrabajoController;
+use App\Http\Controllers\PostulacionController;
+
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
@@ -21,7 +23,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/PublicarVacante', [VacanteTrabajoController::class, 'store']);
-     Route::get('/Vacantes', [VacanteTrabajoController::class, 'show']);
-     Route::get('/Vacantes/buscar', [VacanteTrabajoController::class, 'buscarPorTitulo']);
+    Route::get('/Vacantes', [VacanteTrabajoController::class, 'show']);
+    Route::get('/Vacantes/buscar', [VacanteTrabajoController::class, 'buscarPorTitulo']);
 
+    Route::get('/postulaciones', [PostulacionController::class, 'index']);
+    Route::post('/postulaciones', [PostulacionController::class, 'store']);
+    Route::put('/postulaciones/{id}/status', [PostulacionController::class, 'updateStatus']);
 });
